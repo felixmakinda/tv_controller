@@ -115,25 +115,23 @@ export async function dispatch(
   const reason = confirmationReason(intent, targets.length, ctx.policy ?? DEFAULT_POLICY);
   if (reason && !options.confirmed) return { outcome: 'needs_confirmation', intent, deviceIds: targets, reason };
 
-  // Apps with no searchable catalogue (e.g. Netflix — no public API): open the
-  // app, then hand the query to the phone keyboard so the user only has to
-  // focus the TV's search box. Nothing is claimed beyond "app opened".
-  if ((intent.intent === 'search' || intent.intent === 'play_media') && intent.app && intent.app !== 'youtube') {
-    const app = intent.app;
-    const launch = CommandIntentSchema.parse({ intent: 'launch_app', app, device: intent.device });
-    const reports = await Promise.all(targets.map((id) => runOnDevice(launch, id, ctx, undefined)));
-    steps.push({ step: 'send_command', status: reports.some((r) => isSuccess(r.status)) ? 'ok' : 'failed', detail: `Open ${app}` });
-    const r = finish(intent, steps, reports);
-    return r.outcome === 'failed' ? r : { ...r, followUp: { kind: 'type_text', text: intent.query } };
+  // No searchable catalogue for this app — Netflix (no public API), or YouTube
+  // without an API key: open the app, then hand the query to the phone keyboard
+  // so the user only has to focus the TV's search box. Nothing is claimed
+  // beyond "app opened".
+  if (intent.intent === 'search' || intent.intent === 'play_media') {
+    const app = intent.app ?? 'youtube';
+    if (!ctx.media || ctx.media.app !== app) {
+      const launch = CommandIntentSchema.parse({ intent: 'launch_app', app, device: intent.device });
+      const reports = await Promise.all(targets.map((id) => runOnDevice(launch, id, ctx, undefined)));
+      steps.push({ step: 'send_command', status: reports.some((r) => isSuccess(r.status)) ? 'ok' : 'failed', detail: `Open ${app}` });
+      const r = finish(intent, steps, reports);
+      return r.outcome === 'failed' ? r : { ...r, followUp: { kind: 'type_text', text: intent.query } };
+    }
   }
 
   // Search returns results to the user instead of acting on the TV.
-  if (intent.intent === 'search') {
-    if (!ctx.media || (intent.app && intent.app !== ctx.media.app)) {
-      return finish(intent, steps, targets.map((deviceId) => ({
-        deviceId, status: 'unsupported', detail: 'Search needs a YouTube API key (Settings).',
-      })));
-    }
+  if (intent.intent === 'search' && ctx.media) {
     try {
       const results = await ctx.media.search(intent.query, { limit: 10 });
       steps.push({ step: 'search', status: 'ok', detail: `${results.length} results` });
@@ -146,11 +144,7 @@ export async function dispatch(
 
   // Resolve media once, before touching any device.
   let media: MediaResult | undefined;
-  if (intent.intent === 'play_media') {
-    if (!ctx.media || intent.app !== ctx.media.app) {
-      steps.push({ step: 'search', status: 'failed', detail: `No search provider configured for ${intent.app}.` });
-      return finish(intent, steps, []);
-    }
+  if (intent.intent === 'play_media' && ctx.media) {
     try {
       const results = await ctx.media.search(intent.query, { mode: intent.mode, limit: 5 });
       steps.push({ step: 'search', status: 'ok', detail: `${results.length} results` });

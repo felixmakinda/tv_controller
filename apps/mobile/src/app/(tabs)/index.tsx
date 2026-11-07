@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Pressable, Text, TextInput, View } from 'react-native';
 import type { CommandIntent } from '@tvc/command-schemas';
 import { DPad } from '@/components/DPad';
+import { DemoTvLog } from '@/components/DemoTvLog';
 import { MicButton } from '@/components/MicButton';
 import { Card, Label, RemoteKeyButton, Screen, SectionTitle, StatusPill, Title, type IconName } from '@/components/ui';
 import { pressKey, runIntent } from '@/commands/useCommandRunner';
@@ -57,6 +58,7 @@ export default function Home() {
 
       {active.device ? (
         <>
+          {active.device?.adapterId === 'mock' ? <DemoTvLog limit={3} /> : null}
           <SectionTitle>Quick actions</SectionTitle>
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.md }}>
             {quick.filter((q) => q.show).map((q) => (
@@ -84,6 +86,11 @@ export default function Home() {
               <RemoteKeyButton icon="arrow-undo" label="Back" onPress={() => void pressKey('back')} supported={active.canKey('back')} />
               <RemoteKeyButton icon="home" label="Home" onPress={() => void pressKey('home')} supported={active.canKey('home')} />
               <RemoteKeyButton icon="play" label="Play or pause" onPress={() => void pressKey('play_pause')} supported={active.canKey('play_pause')} />
+            </View>
+            <View style={{ flexDirection: 'row', gap: space.xl }}>
+              <RemoteKeyButton icon="volume-low" label="Volume down" onPress={() => void pressKey('volume_down')} supported={active.canKey('volume_down')} />
+              <RemoteKeyButton icon="volume-mute" label="Mute" onPress={() => void pressKey('mute')} supported={active.canKey('mute')} />
+              <RemoteKeyButton icon="volume-high" label="Volume up" onPress={() => void pressKey('volume_up')} supported={active.canKey('volume_up')} />
             </View>
           </Card>
         </>

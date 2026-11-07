@@ -2,6 +2,7 @@ import { router } from 'expo-router';
 import { Text, View } from 'react-native';
 import type { RemoteKey } from '@tvc/device-contracts';
 import { DPad } from '@/components/DPad';
+import { DemoTvLog } from '@/components/DemoTvLog';
 import { Card, Label, RemoteKeyButton, Screen, StatusPill, type IconName } from '@/components/ui';
 import { pressKey, runIntent } from '@/commands/useCommandRunner';
 import { useActiveDevice } from '@/hooks/useActiveDevice';
@@ -38,6 +39,7 @@ export default function Remote() {
         />
       </View>
 
+      {a.device?.adapterId === 'mock' ? <DemoTvLog limit={3} /> : null}
       <DPad onKey={(k) => void pressKey(k)} />
 
       <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>

@@ -32,8 +32,8 @@ pnpm --filter mobile typecheck
 
 # Development build (required: Expo Go can't load the native module)
 cd apps/mobile
-pnpm android                    # expo run:android, needs the Android SDK
-# or: npx eas-cli@latest build --profile development --platform android
+pnpm build:android              # EAS cloud build (no Android SDK needed)
+# or, with the Android SDK installed: pnpm android:local
 pnpm start                      # Metro for the dev client
 ```
 

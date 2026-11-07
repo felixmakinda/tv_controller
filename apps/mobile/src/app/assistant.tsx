@@ -44,7 +44,11 @@ export default function Assistant() {
             }
           }}
         />
-        <Label muted>{listening ? 'Listening… tap to stop' : speech.error ?? 'Tap the mic and speak'}</Label>
+        {speech.error ? (
+          <Label style={{ color: colors.danger, textAlign: 'center' }}>{speech.error}</Label>
+        ) : (
+          <Label muted>{listening ? 'Listening… tap to stop' : speech.phase === 'starting' ? 'Starting microphone…' : 'Tap the mic and speak'}</Label>
+        )}
         {listening ? <Button label="Cancel" icon="close" onPress={speech.cancel} /> : null}
       </View>
 
@@ -66,15 +70,8 @@ export default function Assistant() {
       {state.phase === 'not_understood' ? (
         <Card>
           <SectionTitle>Assistant</SectionTitle>
-          <Label>I can’t handle that one yet without the AI interpreter (coming in Phase 3).</Label>
-          {state.fallback ? (
-            <Button
-              label={describeIntent(state.fallback)}
-              icon="search"
-              variant="primary"
-              onPress={() => void runParsed(state.fallback!, false, state.text)}
-            />
-          ) : null}
+          <Label>I didn’t understand that as a TV command.</Label>
+          <Label muted>Try things like “volume up”, “open Netflix”, “switch to HDMI 1”, “play Sauti Sol”, or just type what you want to watch.</Label>
         </Card>
       ) : null}
 

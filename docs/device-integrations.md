@@ -2,7 +2,7 @@
 
 Legend: ✅ implemented and tested on hardware · 🧪 implemented and unit-tested, **unverified on hardware** · 🟡 simulated (Demo TV only) · ⛔ not supported · 🗓 planned
 
-> Nothing below has been run against a physical TV yet. The unit tests show our logic matches the message shapes used by maintained libraries. They do **not** show that any particular TV model works. After each hardware session, update this table with the model and firmware.
+> First hardware session 2026-11-08: see the log at the bottom. The unit tests show our logic matches the message shapes used by maintained libraries. They do **not** show that any particular TV model works. After each hardware session, update this table with the model and firmware.
 
 ## Samsung Tizen (`@tvc/samsung-protocol`)
 
@@ -44,4 +44,4 @@ All capabilities 🟡. The UI labels it "Simulated" everywhere.
 ## Hardware log
 | Date | Model | Year/firmware | Result |
 |---|---|---|---|
-| — | — | — | — |
+| 2026-11-08 | Samsung (model TBD), wired LAN | TBD | ✅ pairing, ✅ remote keys/navigation, ✅ volume keys (found on Remote tab). ❌ phone keyboard → TV search box (under investigation). Voice failed silently → fixed in app (on-device fallback), retest. |

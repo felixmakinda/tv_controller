@@ -35,10 +35,11 @@
   "scripts": {
     "start": "expo start --dev-client",
     "start:go": "expo start",
-    "android": "expo run:android",
     "prebuild": "expo prebuild --platform android",
     "typecheck": "tsc --noEmit",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "build:android": "npx --yes eas-cli@latest build --profile development --platform android",
+    "android:local": "expo run:android"
   },
   "private": true
 }

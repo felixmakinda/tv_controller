@@ -76,6 +76,10 @@
         "projectId": "51cea5e2-b73c-4afa-9d3e-591571c0c197"
       }
     },
-    "owner": "felixmakinda"
+    "owner": "felixmakinda",
+    "platforms": [
+      "android",
+      "ios"
+    ]
   }
 }

@@ -50,12 +50,12 @@ export function useCommandRunner() {
   const runText = useCallback(async (text: string) => {
     const parsed = parseLocal(text, text);
     if (parsed.kind === 'empty') return setState({ phase: 'idle' });
-    if (parsed.kind === 'needs_ai') {
-      // Phase 3 will route this to the optional LLM interpreter. Until then, be explicit.
-      return setState({ phase: 'not_understood', text, ...(parsed.fallback ? { fallback: parsed.fallback } : {}) });
-    }
-    setState({ phase: 'running', text, intent: parsed.intent });
-    const report = await runIntent(parsed.intent);
+    // No AI interpreter yet: use the parser's best fallback (usually a YouTube
+    // search) straight away rather than dead-ending.
+    const intent = parsed.kind === 'intent' ? parsed.intent : parsed.fallback;
+    if (!intent) return setState({ phase: 'not_understood', text });
+    setState({ phase: 'running', text, intent });
+    const report = await runIntent(intent);
     void Haptics.notificationAsync(
       report.outcome === 'failed' ? Haptics.NotificationFeedbackType.Error : Haptics.NotificationFeedbackType.Success,
     );

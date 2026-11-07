@@ -39,9 +39,15 @@ export default function Keyboard() {
           <Label>On the TV, open the app’s search box (D-pad if needed), then tap Send.</Label>
         </Card>
       ) : null}
-      <Label muted>
-        {active.textInputActive ? 'The TV has a text field open.' : 'Select a text field on the TV, then type here.'}
-      </Label>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm }}>
+        <View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: active.textInputActive ? colors.success : colors.warning }} />
+        <Label>
+          {active.textInputActive ? 'TV reports a text field is open — ready.' : 'TV hasn’t reported an open text field yet.'}
+        </Label>
+      </View>
+      {!active.textInputActive ? (
+        <Label muted>Select the search box on the TV with the remote and press OK. The dot turns green when the TV accepts phone typing.</Label>
+      ) : null}
       <TextInput
         value={text}
         onChangeText={setText}
@@ -66,7 +72,7 @@ export default function Keyboard() {
         <Button label="Paste" icon="clipboard" onPress={() => void Clipboard.getStringAsync().then((s) => setText((t) => t + s))} />
         <Button label="TV Enter" icon="checkmark" onPress={() => void pressKey('select')} />
       </View>
-      {status ? <Label muted>{status}</Label> : null}
+      {status ? <Label style={{ color: colors.text }}>{status}</Label> : null}
     </Screen>
   );
 }

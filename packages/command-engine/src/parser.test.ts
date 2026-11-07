@@ -94,8 +94,25 @@ describe('parseLocal — hands off to AI', () => {
     expect(r.kind).toBe('needs_ai');
     if (r.kind === 'needs_ai') expect(r.fallback).toMatchObject({ intent: 'play_media', query: 'good kenyan music' });
   });
-  it('unknown', () => {
-    expect(parseLocal('make me a sandwich').kind).toBe('needs_ai');
+  it('plain text becomes a YouTube search fallback', () => {
+    const r = parseLocal('Arsenal highlights');
+    expect(r).toMatchObject({ kind: 'needs_ai', fallback: { intent: 'search', app: 'youtube', query: 'arsenal highlights' } });
+  });
+  it('unknown control phrases get no guessed search', () => {
+    const r = parseLocal('switch the subtitles to french');
+    expect(r.kind).toBe('needs_ai');
+    if (r.kind === 'needs_ai') expect(r.fallback).toBeUndefined();
+  });
+  it('i want to watch …', () => {
+    expect(intentOf('I want to watch Arsenal highlights')).toMatchObject({ intent: 'play_media', query: 'arsenal highlights' });
+  });
+  it('listen to … is music', () => {
+    expect(intentOf('listen to Sauti Sol')).toMatchObject({ intent: 'play_media', query: 'sauti sol', mode: 'music' });
+  });
+  it('app-first phrasing', () => {
+    expect(intentOf('YouTube arsenal highlights')).toMatchObject({ intent: 'search', app: 'youtube', query: 'arsenal highlights' });
+    expect(intentOf('netflix money heist')).toMatchObject({ intent: 'search', app: 'netflix', query: 'money heist' });
+    expect(intentOf('open youtube')).toMatchObject({ intent: 'launch_app', app: 'youtube' });
   });
   it('empty', () => {
     expect(parseLocal('   ').kind).toBe('empty');

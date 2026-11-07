@@ -131,10 +131,18 @@ describe('dispatch', () => {
     expect(r).not.toHaveProperty('followUp');
   });
 
-  it('play_media without a search provider fails honestly', async () => {
-    const { s } = fakeSession('a');
-    const r = await dispatch(intent({ intent: 'play_media', query: 'x' }), ctx({ a: s }));
-    expect(r.outcome).toBe('failed');
+  it('YouTube without an API key falls back to: open YouTube + phone keyboard', async () => {
+    const { s: sess, calls } = fakeSession('a');
+    const r = await dispatch(intent({ intent: 'search', query: 'arsenal highlights' }), ctx({ a: sess }));
+    expect(calls).toEqual(['launch:youtube']);
+    expect(r).toMatchObject({ outcome: 'completed', followUp: { kind: 'type_text', text: 'arsenal highlights' } });
+  });
+
+  it('play_media without a provider never claims playback', async () => {
+    const { s: sess } = fakeSession('a');
+    const r = await dispatch(intent({ intent: 'play_media', query: 'x' }), ctx({ a: sess }));
+    expect(r).not.toHaveProperty('media');
+    if (r.outcome === 'completed') expect(r.devices[0]?.status).toBe('acknowledged'); // app launch only
   });
 
   it('ambiguous default asks for a device', async () => {

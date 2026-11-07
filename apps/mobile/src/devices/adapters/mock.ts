@@ -27,16 +27,22 @@ export const MOCK_DEVICE: DiscoveredDevice = {
 export type MockLogEntry = { at: number; action: string };
 const log: MockLogEntry[] = [];
 const logListeners = new Set<() => void>();
+let logVersion = 0;
 export const mockLog = {
   entries: () => log,
+  /** Changes on every new entry (snapshot for useSyncExternalStore). */
+  version: () => logVersion,
   subscribe(l: () => void) {
     logListeners.add(l);
-    return () => logListeners.delete(l);
+    return () => {
+      logListeners.delete(l);
+    };
   },
 };
 function record(action: string) {
   log.unshift({ at: Date.now(), action });
   log.length = Math.min(log.length, 30);
+  logVersion += 1;
   logListeners.forEach((l) => l());
 }
 

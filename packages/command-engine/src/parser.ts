@@ -166,13 +166,23 @@ export function parseLocal(input: string, originalCase?: string): LocalParse {
     return ok({ intent: 'search', query: search[2], ...(app ? { app } : {}), device }, normalized);
   }
 
-  // Play specific content: "play X (on youtube)"
-  const play = rest.match(/^(?:play|put on|put|show me|watch)(?: me)? (.+?)(?: on (you ?tube|netflix))?$/);
+  // "youtube arsenal highlights" / "netflix money heist"
+  const appFirst = rest.match(/^(you ?tube|netflix) (?!app$)(.+)$/);
+  if (appFirst) {
+    const app = matchApp(appFirst[1]!)!;
+    return ok({ intent: 'search', query: appFirst[2]!.replace(/^(?:for|search(?: for)?) /, ''), app, device }, normalized);
+  }
+
+  // Play specific content: "play X (on youtube)", "i want to watch X", "listen to X"
+  const play = rest.match(
+    /^(?:(?:i (?:want|would like|wanna) to|let me|can i|i'd like to) )?(?:play|put on|put|show me|watch|see|listen to|hear)(?: me)? (.+?)(?: on (you ?tube|netflix))?$/,
+  );
   if (play) {
     const query = play[1]!.replace(/^(?:some|a few|a|an|the) /, '').trim();
     const app = matchApp(play[2] ?? '') ?? 'youtube';
     const vague = /^(something|anything|good|nice|relaxing|appropriate|whatever)\b/.test(query);
-    const intent = { intent: 'play_media', query, app, ...(/\b(music|songs?|album|playlist|mix)\b|\bby\b/.test(query) ? { mode: 'music' } : {}), device };
+    const isMusic = /\b(music|songs?|album|playlist|mix)\b|\bby\b/.test(query) || /^(?:.* )?(?:listen to|hear) /.test(rest);
+    const intent = { intent: 'play_media', query, app, ...(isMusic ? { mode: 'music' } : {}), device };
     if (!vague && query.length > 0) return ok(intent, normalized);
     return needsAi(normalized, intent);
   }
@@ -181,8 +191,16 @@ export function parseLocal(input: string, originalCase?: string): LocalParse {
   const vague = rest.match(/^(?:find|get|recommend|suggest)(?: me)? (?:some |something )?(.+)$/);
   if (vague) return needsAi(normalized, { intent: 'search', query: vague[1], app: 'youtube', device });
 
+  // Anything else that doesn't look like a TV-control phrase is most likely
+  // something to watch ("arsenal highlights") — offer a YouTube search.
+  // Control-like phrases we didn't understand get no guess.
+  if (!CONTROL_VERBS.test(rest) && rest.split(' ').length <= 10) {
+    return needsAi(normalized, { intent: 'search', query: rest, app: 'youtube', device });
+  }
   return { kind: 'needs_ai', normalized };
 }
+
+const CONTROL_VERBS = /^(?:turn|switch|power|set|change|increase|decrease|raise|lower|reduce|mute|unmute|pause|resume|stop|go|move|press|open|launch|start|close|exit|quit|select|skip|rewind|forward|volume|channel|input|source|hdmi)\b/;
 
 function ok(candidate: unknown, normalized: string): LocalParse {
   const r = CommandIntentSchema.safeParse(candidate);
