@@ -44,4 +44,4 @@ All capabilities 🟡. The UI labels it "Simulated" everywhere.
 ## Hardware log
 | Date | Model | Year/firmware | Result |
 |---|---|---|---|
-| 2026-11-08 | Samsung (model TBD), wired LAN | TBD | ✅ pairing, ✅ remote keys/navigation, ✅ volume keys (found on Remote tab). ❌ phone keyboard → TV search box (under investigation). Voice failed silently → fixed in app (on-device fallback), retest. |
+| 2026-11-08 | Samsung UA55RU7300KXKE (RU7300, 55"), wired LAN | 2019 · Tizen 5.0 | ✅ pairing, ✅ remote keys/navigation, ✅ volume keys (found on Remote tab). ❌ phone keyboard → YouTube search box: TV sends no imeStart (YouTube on-screen keyboard?); browser test pending. Voice failed silently → fixed in app (on-device fallback), retest. |

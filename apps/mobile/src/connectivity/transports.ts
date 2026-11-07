@@ -21,7 +21,10 @@ class NativeSocket implements MessageSocket {
     const native = TvNative!;
     this.subs.push(
       native.addListener('onSocketMessage', (e) => {
-        if (e.socketId === id) this.msgListeners.forEach((l) => l(e.data));
+        if (e.socketId !== id) return;
+        // Dev-only protocol trace (shows in the `pnpm start` terminal). Tokens are redacted.
+        if (__DEV__) console.log('[tv ←]', e.data.replace(/"token":\s*"?[^",}]+"?/g, '"token":"…"').slice(0, 300));
+        this.msgListeners.forEach((l) => l(e.data));
       }),
       native.addListener('onSocketClose', (e) => {
         if (e.socketId !== id) return;
@@ -32,6 +35,8 @@ class NativeSocket implements MessageSocket {
   }
 
   send(data: string) {
+    // Typed text is base64 in `Cmd` — redact it so passwords never reach logs.
+    if (__DEV__) console.log('[tv →]', data.replace(/"Cmd":"[A-Za-z0-9+/=]{4,}"/g, '"Cmd":"…"').slice(0, 200));
     if (!TvNative!.sendSocket(this.id, data)) throw new Error('Socket is closed');
   }
   close() {
