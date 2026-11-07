@@ -1,14 +1,101 @@
-node_modules/
-.expo/
-dist/
-*.tsbuildinfo
+# =====================================================================
+# 1. SECRETS — must never be committed (this repo is public)
+# =====================================================================
+
+# Environment files. Only the documented template is committed.
 .env
 .env.*
 !.env.example
-.DS_Store
-# generated native projects (Expo CNG)
+
+# Android signing keys / keystores (EAS manages release keys remotely)
+*.jks
+*.keystore
+!debug.keystore
+keystore.properties
+
+# Apple signing material
+*.p8
+*.p12
+*.mobileprovision
+*.cer
+
+# Private keys and certificates
+*.pem
+*.key
+*.crt
+
+# EAS local credentials (only exists if you opt into local credentials)
+credentials.json
+credentials/
+
+# Google / Firebase service files (contain project keys)
+google-services.json
+GoogleService-Info.plist
+*-service-account*.json
+
+# Backend secrets (Phase 3+)
+apps/backend/.env
+apps/backend/*.sqlite3
+apps/gateway/config.local.*
+
+# Personal tool settings
+.claude/settings.local.json
+
+# =====================================================================
+# 2. GENERATED / LOCAL — not secret, just noise or machine-specific
+# =====================================================================
+
+# Dependencies
+node_modules/
+
+# Expo / Metro
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+.metro-health-check*
+
+# Generated native projects (Expo CNG — regenerated from app.json)
 apps/mobile/android/
 apps/mobile/ios/
-# python
+
+# Gradle / Kotlin / Android Studio caches (e.g. from IDE sync of local modules)
+.gradle/
+.kotlin/
+build/
+local.properties
+.idea/
+*.iml
+.cxx/
+.externalNativeBuild/
+
+# Xcode
+DerivedData/
+*.xcuserstate
+xcuserdata/
+Pods/
+
+# TypeScript / tests
+*.tsbuildinfo
+coverage/
+
+# Logs
+*.log
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+pnpm-debug.log*
+
+# Python (backend)
 __pycache__/
+*.py[cod]
 .venv/
+venv/
+.pytest_cache/
+
+# OS / editors
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/*
+!.vscode/extensions.json

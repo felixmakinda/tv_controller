@@ -16,6 +16,16 @@
 | Minimal permissions | Storage and overlay permissions that Expo adds by default are blocked in `app.json`. |
 | Supply chain | pnpm with `minimumReleaseAge: 1440`, dependency install scripts blocked, and `strictDepBuilds`. |
 
+## Public repository rules
+
+The repo is public (github.com/felixmakinda/tv_controller). The root `.gitignore` is split into **secrets** and **generated files**.
+
+- **Never committed:** `.env*` (except `.env.example`), signing keys (`*.jks`, `*.keystore`, `*.p8`, `*.p12`), private keys/certs (`*.pem`, `*.key`), EAS `credentials.json`, Google service files, backend `.env`.
+- **Safe to commit:** `app.json`'s EAS `projectId`/`owner` (identifiers, not credentials), `eas.json`, the lockfile.
+- **Release signing keys** stay in EAS's remote credential store, never in the repo.
+- **The `.gitignore` alone isn't enough.** Any `EXPO_PUBLIC_*` value is compiled into the app and can be pulled out of the APK by anyone. Never put a secret there. User-entered keys go to SecureStore, and server-side keys (LLM) will live only in `apps/backend`.
+- Before each push: `git diff --cached` and look for keys. Turn on GitHub **secret scanning + push protection** (repo Settings → Code security).
+
 ## Accepted risks
 
 1. **Cleartext HTTP is enabled app-wide** (`usesCleartextTraffic`). Samsung's info/REST endpoints and Roku ECP are plain HTTP on the LAN, and Android's Network Security Config cannot allow-list IP ranges. Mitigation: no secret is ever sent over plain HTTP; the Samsung token travels only over the pinned `wss` connection.
