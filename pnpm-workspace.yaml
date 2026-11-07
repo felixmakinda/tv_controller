@@ -1,0 +1,14 @@
+packages:
+  - apps/mobile
+  - packages/*
+
+# --- Supply-chain hardening ---
+# Don't install versions published less than 24h ago (most malicious releases
+# are yanked within hours).
+minimumReleaseAge: 1440
+# Dependency install scripts are blocked by default in pnpm 10. Allow-list here
+# only packages that genuinely need them (none do today).
+onlyBuiltDependencies: []
+# Fail instead of silently skipping if a new dependency wants to run a script,
+# so it gets a conscious review.
+strictDepBuilds: true

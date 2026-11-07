@@ -1,0 +1,81 @@
+{
+  "expo": {
+    "name": "Universal Remote",
+    "slug": "universal-tv-controller",
+    "version": "0.1.0",
+    "scheme": "tvremote",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "experiments": {
+      "typedRoutes": true
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.universaltv.remote",
+      "infoPlist": {
+        "NSSpeechRecognitionUsageDescription": "Universal Remote converts your speech to text to control your TV.",
+        "NSMicrophoneUsageDescription": "Universal Remote uses the microphone only while you hold the mic button, to turn your voice into TV commands."
+      }
+    },
+    "android": {
+      "package": "com.universaltv.remote",
+      "adaptiveIcon": {
+        "backgroundColor": "#0E1116",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "permissions": [
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.ACCESS_WIFI_STATE",
+        "android.permission.CHANGE_WIFI_MULTICAST_STATE",
+        "android.permission.RECORD_AUDIO"
+      ],
+      "predictiveBackGestureEnabled": false,
+      "blockedPermissions": [
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.SYSTEM_ALERT_WINDOW"
+      ]
+    },
+    "plugins": [
+      "expo-router",
+      "expo-sqlite",
+      [
+        "expo-secure-store",
+        {
+          "configureAndroidBackup": true
+        }
+      ],
+      [
+        "expo-speech-recognition",
+        {
+          "microphonePermission": "Universal Remote uses the microphone only while you hold the mic button, to turn your voice into TV commands.",
+          "speechRecognitionPermission": "Universal Remote converts your speech to text to control your TV."
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          }
+        }
+      ],
+      "expo-font"
+    ],
+    "extra": {
+      "router": {
+        "asyncRoutes": {
+          "web": true
+        }
+      },
+      "eas": {
+        "projectId": "51cea5e2-b73c-4afa-9d3e-591571c0c197"
+      }
+    },
+    "owner": "felixmakinda"
+  }
+}

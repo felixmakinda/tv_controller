@@ -1,0 +1,14 @@
+node_modules/
+.expo/
+dist/
+*.tsbuildinfo
+.env
+.env.*
+!.env.example
+.DS_Store
+# generated native projects (Expo CNG)
+apps/mobile/android/
+apps/mobile/ios/
+# python
+__pycache__/
+.venv/
